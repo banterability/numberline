@@ -1,0 +1,109 @@
+<!doctype html>
+<head>
+  <style>
+    .filmstrip-outer{
+      display: inline-block;
+    }
+    .filmstrip-inner{
+      background-image: url('numberline.png');
+      background-repeat: no-repeat;
+      background-position-y: -2px;
+      width: 42px;
+      height: 67px;
+      -webkit-transition: background-position 80ms ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="filmstrip-outer">
+    <div class="filmstrip-inner" id="outer">
+    </div>
+  </div>
+  <div class="filmstrip-outer">
+    <div class="filmstrip-inner" id="middle">
+    </div>
+  </div>
+  <div class="filmstrip-outer">
+    <div class="filmstrip-inner" id="inner">
+    </div>
+  </div>
+  <div class="filmstrip-outer">
+    <div class="filmstrip-inner" id="last">
+    </div>
+  </div>
+  <script>
+
+    NUMBER_MAP = {
+      "digit-0": -2,
+      "digit-1": -62,
+      "digit-2": -122,
+      "digit-3": -182,
+      "digit-4": -242,
+      "digit-5": -302,
+      "digit-6": -362,
+      "digit-7": -422,
+      "digit-8": -482,
+      "digit-9": -542
+    };
+
+    var $outer = document.getElementById('outer');
+    var $middle = document.getElementById('middle');
+    var $inner = document.getElementById('inner');
+    var $last = document.getElementById('last');
+
+    var flipDigit = function($el, value){
+      offset = NUMBER_MAP["digit-" + value] + "px";
+      $el.dataset['current'] = value;
+      $el.style.backgroundPositionY = offset;
+    }
+
+    var tick = function(){
+      var current, currentValues, next;
+
+      currentValues = [
+        $outer.dataset['current'],
+        $middle.dataset['current'],
+        $inner.dataset['current'],
+        $last.dataset['current']
+      ].join("");
+
+      current = parseInt(currentValues, 10);
+
+      next = tickUp(current);
+
+      digits = getDigits(next, 4);
+
+      flipDigit($outer, digits[0]);
+      flipDigit($middle, digits[1]);
+      flipDigit($inner, digits[2]);
+      flipDigit($last, digits[3]);
+    }
+
+    var setInitialPositions = function(){
+      flipDigit($outer, 0);
+      flipDigit($middle, 0);
+      flipDigit($inner, 0);
+      flipDigit($last, 0);
+    }
+
+    var tickUp = function(number){
+      number += 1;
+      if (number > 9999){
+        number = 0
+      };
+      return number;
+    }
+    var getDigits = function(digits, length){
+      digits = digits.toString();
+      digitArray = digits.split("");
+      while (digitArray.length < length) {
+        digitArray.unshift("0");
+      }
+      return digitArray.join("");
+    }
+
+    setInitialPositions();
+    setInterval(tick, 250);
+
+  </script>
+</body>
